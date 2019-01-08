@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>My AngularJS App</title>
+</head>
+<body ng-app="myapp">
+<div ng-controller="myFormCtrl">
+	<input type="text" ng-model="nameinput">
+	<ul>
+		<li ng-repeat="i in nameAry">
+			{{i.name}}
+		</li>
+	</ul>
+</div>
+
+<br>
+controller 2
+<div ng-controller="expanderCtrl">
+	<table>
+		<tr ng-repeat="i in tabsName">
+			<td>{{i.name}}</td>
+		</tr>
+	</table>
+</div>
+<script src="lib/angular.js"></script>
+<script>
+
+	var myapp=angular.module('myapp',[]);
+	myapp.factory('userListService',['$http',function($http){
+		var doRequ=function(methods,path){
+			$http({
+				method:methods,
+				url:path
+			});
+		};
+		return {
+			'userList':function(methods,path){
+				return doRequ(methods,path);
+			}
+		}
+	}]);
+	myapp.controller('myFormCtrl',['$scope','userListService',function($scope,userListService){
+		$scope.nameinput="yu";
+		userListService.userList('get','lib/data.js')
+				.success(function(data, status, headers, config) {
+					console.log(data);
+					$scope.nameAry=data;
+				})
+				.error(function(data, status, headers, config) {
+					console.log(data);
+				});
+		}]);
+	myapp.controller('expanderCtrl',['$scope','userListService',function($scope,userListService){
+		userListService.userList('get','lib/data.js').success(function(data,status){
+			$scope.tabsName=data;
+		});
+	}]);
+</script>
+</body>
+</html>

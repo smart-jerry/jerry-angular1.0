@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>My AngularJS App</title>
+</head>
+<body ng-app="myapp">
+<div>
+	<form name="myForm" ng-controller="myFormCtrl" ng-submit="login()">
+		<!--没有name属性，输入框不会校验-->
+		<input type="email" name="username" ng-model="username" placeholder="please inter you email" required><br><br>
+		<span class="error" ng-show="myForm.username.$error.required">Required!</span><br>
+		<span class="error" ng-show="myForm.username.$valid">{{myForm.username.$valid}},这个值只有在正确的时候才会显示出来</span><br>
+
+		<input type="password" name="psw" ng-model="psw" placeholder="please inter you password" required ng-minlength="6" ng-maxlength="12"><br><br>
+		<span class="error" ng-show="myForm.psw.$error.required">Required!</span><br>
+
+		<input type="checkbox" ng-true-value="1" ng-false-value="0" required>{{serviceD}}<br><br>
+		<input type="submit" value="submit2" ng-disabled="!myForm.$valid">
+	</form>
+
+	<br>下面是自定义的指令，部分自定义指令见，angularIndex.html
+	<br>
+	<div ng-controller="expanderCtrl">
+		<expander expander-title="title1">
+			{{text}}
+		</expander>
+	</div>
+</div>
+
+<script src="lib/angular.js"></script>
+<script>
+
+	var myapp=angular.module('myapp',[]);
+	myapp.controller('myFormCtrl',['$scope',function($scope){
+		$scope.username="admin@163.com";
+		$scope.psw="12345678";
+		$scope.serviceD="服务条款";
+		$scope.login=function(){
+			console.log('正在提交.....');
+		}
+	}]);
+	myapp.controller('expanderCtrl',['$scope',function($scope){
+		$scope.title1="这里是点击头";
+		$scope.text="这里是内容展示区域";
+	}]);
+	myapp.directive('expander',function(){
+		return{
+			restrict:'AE',
+			repace:true,
+			transclude:true,
+			scope:{
+				title:'=expanderTitle'
+			},
+			template:'<div><div style="background: red; cursor: pointer;" ng-click="toggleE()">{{title}}</div>' +
+			'<div style="border: 1px solid orange;" ng-show="showme" ng-transclude></div></div>',
+			link:function(scope,element,attr){
+				scope.showme=true;
+				scope.toggleE=function(){
+					scope.showme=!scope.showme;
+				}
+			}
+		}
+	});
+</script>
+</body>
+</html>

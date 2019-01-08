@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="http://code.angularjs.org/angular-1.0.1.min.js"></script>
+</head>
+<body ng-app="myModule">
+<div>
+	Your name: <input type="text" ng-model="yourname" placeholder="World">
+	<hr>
+	Hello {{yourname || 'World'}}!
+
+	<table ng-controller="mcontrol">
+		<tr ng-repeat="i in phones">
+			<td>{{i.name}}</td>
+			<td>{{i.text}}</td>
+		</tr>
+	</table>
+	<script>
+		function mcontrol($scope){
+			$scope.phones=[{name:'yuer',text:"hello yu er",text1:"hello yu er"},
+				{name:"yello",text:"hello yellow"}];
+		}
+	</script>
+
+	search:<input type="text" ng-model="search">
+	order by:
+	<select ng-model="orderB">
+		<option value="app">app</option>
+		<option value="b">b</option>
+	</select>
+	<ul ng-controller="newSearch">
+		<li ng-repeat="text in searchT | filter:search | orderBy:orderB">
+			{{text}}
+		</li>
+	</ul>
+	<script>
+		function newSearch($scope){
+			$scope.searchT=["apple","orange","app","yellow","blue","black","big","yes"];
+		}
+	</script>
+	<div>9*3={{9*3}}</div>
+</div>
+
+
+
+<br><br><br><br>
+指令@,=,&的双向数据绑定：
+<div >
+	<div ng-controller="ctrl">
+
+		ctrl:
+		<input  type="text" ng-model="puWater"><br>
+
+		directive:=
+		<dirnks watera="puWater"></dirnks>
+
+		<br><br>
+		指令@
+		<dirnk addd="{{puWater}}"></dirnk><br>
+
+		指令&
+		<greetingf greeta="sayHelloName(name)"></greetingf>
+	</div>
+</div>
+<br><br><br><br>
+$scope应用
+<div ng-controller="eventController">
+	Rootscope
+	<tt>MyEvent</tt> count:{{count}}
+	<ul>
+		<li ng-controller="eventController">
+			<button ng-click="$emit('myEvent')">$emit('myEvent')</button>
+			<button ng-click="$broadcast('myEvent')">$broadcast('myEvent')</button>
+
+			<br>
+			middle scope
+
+			<tt>MyEvent</tt> count:{{count}}
+			<ul>
+				<li ng-controller="eventController">
+					leaf scope
+					<tt>MyEvent </tt> count:{{count}}
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+
+<script>
+	var myModule=angular.module('myModule',[]);
+	myModule.controller('ctrl',['$scope',function($scope){
+		$scope.puWater='hello word!';
+		$scope.puWatera='hello word!';
+		$scope.sayHelloName=function(name){
+			alert("hello "+name);
+		}
+		$scope.sayHello=function(name){
+			alert("Hello "+name);
+		}
+	}]);
+	myModule.directive('dirnks',function(){
+		return{
+			restrict:'AE',
+			scope:{
+				watera:'='
+			},
+			template:'<input type="text" ng-model="watera">'
+		}
+	});
+	myModule.directive('dirnk',function(){
+		return{
+			restrict:'AE',
+			scope:{
+				addd:'@'
+			},
+			template:'<div>{{addd}}</div>'
+		}
+	});
+	myModule.directive('greetingf',function(){
+		return{
+			restrict:'AE',
+			scope:{
+				greeta:'&'
+			},
+			template:'<input type="text" ng-model="userName1" /><input type="button" ng-click="greeta({name:userName1})" value="button">'
+		}
+	});
+
+	myModule.controller('eventController',['$scope',function($scope){
+		$scope.count=0;
+		$scope.$on('myEvent',function(){
+			$scope.count++;
+		})
+	}]);
+</script>
+</body>
+</html>

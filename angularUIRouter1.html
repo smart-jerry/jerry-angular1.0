@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>My AngularJS App</title>
+</head>
+<body ng-app="myapp">
+<div>
+	<ul>
+		<li><a ui-sref="router1">myview1</a></li>
+		<li><a ui-sref="router2">myview2</a></li>
+		<li><a ui-sref="router3">myview3</a></li>
+		<li><a ui-sref="home">home</a></li>
+	</ul>
+	<div class="contain" ui-view>	</div>
+</div>
+
+<script src="lib/angular.js"></script>
+<script src="lib/angular-ui-router.js"></script>
+<script>
+	var myapp=angular.module('myapp',['ui.router']);
+	myapp.config(function($stateProvider,$urlRouterProvider){
+		$urlRouterProvider.otherwise('/router1');
+		$stateProvider.state('router1',{/*单个试图的配置*/
+			url:'/router1show',
+			templateUrl:'tpls/view1.html',
+			controller:function($scope){
+				$scope.content="这个是view1，用路由实现的哦！";
+			}
+		}).state('router2',{/*单个试图的配置*/
+			url:'/router2show',
+			templateUrl:'tpls/view2.html',
+			controller:function($scope){
+				$scope.content2=["A", "List", "Of", "Items"];
+			}
+		}).state('router3',{/*单个试图的配置*/
+			url:'/router3show',
+			templateUrl:'tpls/view3.html',
+			controller:function($scope){
+				$scope.content2=[1,2,5,6,8,8,8,4,9,9]
+			}
+		}).state('router3.list',{/*上下2级别试图的配置*/
+			url:'/listshow',
+			template:'这是view3 的子元素区域'
+		}).state('home',{/*引入的模板试图中，包含2个并列试图*/
+			url:'/home',
+			views:{
+				'':{
+					templateUrl:'tpls/home.html'/*引入模板试图*/,
+					controller:function($scope){
+						console.log(111111);
+					}
+				},
+				'topbar@home':{
+					templateUrl:'tpls/topbar.html'/*给模板试图中的topbar试图再次引入一个模板*/,
+					controller:function($scope){
+						console.log(222);
+					}
+				},
+				'main@home':{/*给模板试图的main试图出入一句话*/
+					template:'this is main.'
+				}
+			}
+		}).state('home.view1',{/*给topbar里面的连接按钮配置路由*/
+			url:'/homeview1',
+			views:{
+				'main@home':{/*点击topbar里的连接，指定试图层在main试图中显示，并更改main试图中的内容*/
+					template:'this is homeview1.'
+				}
+			}
+		}).state('home.view2',{
+			url:'/homeview2',
+			views:{
+				'main@home':{
+					template:'this is homeview2.'
+				}
+			}
+		});
+	});
+</script>
+</body>
+</html>
